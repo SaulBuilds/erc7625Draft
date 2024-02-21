@@ -1,0 +1,197 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="704pt" height="755pt" viewBox="0.00 0.00 703.62 755.00">
+<g id="graph0" class="graph" transform="translate(25.144978041737005,687.4241538253181) scale(0.8752367539417906)" data-name="G">
+
+<polygon fill="#2e3e56" stroke="none" points="-4,4 -4,-751 699.62,-751 699.62,4 -4,4" style=""/>
+<g id="clust1" class="cluster" data-name="clusterERC7625Test">
+
+<path fill="#445773" stroke="#445773" d="M20,-363C20,-363 599.48,-363 599.48,-363 605.48,-363 611.48,-369 611.48,-375 611.48,-375 611.48,-590 611.48,-590 611.48,-596 605.48,-602 599.48,-602 599.48,-602 20,-602 20,-602 14,-602 8,-596 8,-590 8,-590 8,-375 8,-375 8,-369 14,-363 20,-363" style=""/>
+<text text-anchor="middle" x="309.74" y="-585.4" font-family="Times,serif" font-size="14.00" fill="#f0f0f0" style="">ERC7625Test</text>
+</g>
+<g id="clust2" class="cluster" data-name="clusterERC7625">
+
+<path fill="#3b4b63" stroke="#e8726d" stroke-dasharray="5,2" d="M443.84,-8C443.84,-8 675.62,-8 675.62,-8 681.62,-8 687.62,-14 687.62,-20 687.62,-20 687.62,-343 687.62,-343 687.62,-349 681.62,-355 675.62,-355 675.62,-355 443.84,-355 443.84,-355 437.84,-355 431.84,-349 431.84,-343 431.84,-343 431.84,-20 431.84,-20 431.84,-14 437.84,-8 443.84,-8" style=""/>
+<text text-anchor="middle" x="559.73" y="-338.4" font-family="Times,serif" font-size="14.00" fill="#f0f0f0" style="">ERC7625</text>
+</g>
+<g id="clust3" class="cluster" data-name="cluster_01">
+
+<polygon fill="#2e3e56" stroke="black" points="136.92,-610 136.92,-739 594.73,-739 594.73,-610 136.92,-610" style=""/>
+<text text-anchor="middle" x="365.82" y="-722.4" font-family="Times,serif" font-size="14.00" style="">Legend</text>
+</g>
+<!-- ERC7625Test.setUp -->
+<g id="node1" class="node" pointer-events="visible" data-name="ERC7625Test.setUp">
+
+<ellipse fill="#ff9797" stroke="#ff9797" stroke-width="3" cx="209.92" cy="-551" rx="33.63" ry="18" style=""/>
+<text text-anchor="middle" x="209.92" y="-546.8" font-family="Times,serif" font-size="14.00" style="">setUp</text>
+</g>
+<!-- ERC7625Test.testCreateContractAndMetadata -->
+<g id="node2" class="node" pointer-events="visible" data-name="ERC7625Test.testCreateContractAndMetadata">
+
+<ellipse fill="#ff9797" stroke="#ff9797" stroke-width="3" cx="209.92" cy="-497" rx="135.41" ry="18" style=""/>
+<text text-anchor="middle" x="209.92" y="-492.8" font-family="Times,serif" font-size="14.00" style="">testCreateContractAndMetadata</text>
+</g>
+<!-- ERC7625Test.assertEq -->
+<g id="node5" class="node" pointer-events="visible" data-name="ERC7625Test.assertEq">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="559.73" cy="-443" rx="43.5" ry="18" style=""/>
+<text text-anchor="middle" x="559.73" y="-438.8" font-family="Times,serif" font-size="14.00" style="">assertEq</text>
+</g>
+<!-- ERC7625Test.testCreateContractAndMetadata&#45;&gt;ERC7625Test.assertEq -->
+<g id="edge3" class="edge" data-name="ERC7625Test.testCreateContractAndMetadata-&gt;ERC7625Test.assertEq">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M310.15,-483.76C340.27,-479.57 373.44,-474.78 403.84,-470 437.78,-464.67 475.79,-458.05 505.66,-452.7" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="506.15,-456.17 515.37,-450.96 504.91,-449.28 506.15,-456.17" style=""/>
+</g>
+<!-- ERC7625.createContract -->
+<g id="node6" class="node" pointer-events="visible" data-name="ERC7625.createContract">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="559.73" cy="-142" rx="67.17" ry="18" style=""/>
+<text text-anchor="middle" x="559.73" y="-137.8" font-family="Times,serif" font-size="14.00" style="">createContract</text>
+</g>
+<!-- ERC7625Test.testCreateContractAndMetadata&#45;&gt;ERC7625.createContract -->
+<g id="edge1" class="edge" data-name="ERC7625Test.testCreateContractAndMetadata-&gt;ERC7625.createContract">
+
+<path fill="none" stroke="white" stroke-width="2" d="M341.57,-502.29C365.03,-497.18 387.26,-487.37 403.84,-470 450.23,-421.41 387.19,-219.2 431.84,-169 443.88,-155.46 460.89,-147.76 478.55,-143.58" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="479.01,-147.05 488.17,-141.73 477.69,-140.18 479.01,-147.05" style=""/>
+</g>
+<!-- ERC7625.ownerOfContractId -->
+<g id="node7" class="node" pointer-events="visible" data-name="ERC7625.ownerOfContractId">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="559.73" cy="-304" rx="86.81" ry="18" style=""/>
+<text text-anchor="middle" x="559.73" y="-299.8" font-family="Times,serif" font-size="14.00" style="">ownerOfContractId</text>
+</g>
+<!-- ERC7625Test.testCreateContractAndMetadata&#45;&gt;ERC7625.ownerOfContractId -->
+<g id="edge2" class="edge" data-name="ERC7625Test.testCreateContractAndMetadata-&gt;ERC7625.ownerOfContractId">
+
+<path fill="none" stroke="white" stroke-width="2" d="M346.02,-498.74C367.3,-493.51 387.6,-484.57 403.84,-470 441.71,-436.02 398.89,-397.77 431.84,-359 445.94,-342.41 465.98,-330.67 485.97,-322.43" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="487.09,-325.75 495.2,-318.93 484.6,-319.2 487.09,-325.75" style=""/>
+</g>
+<!-- ERC7625Test.testLockUnlockAssetTransfersWithMetadata -->
+<g id="node3" class="node" pointer-events="visible" data-name="ERC7625Test.testLockUnlockAssetTransfersWithMetadata">
+
+<ellipse fill="#ff9797" stroke="#ff9797" stroke-width="3" cx="209.92" cy="-389" rx="185.75" ry="18" style=""/>
+<text text-anchor="middle" x="209.92" y="-384.8" font-family="Times,serif" font-size="14.00" style="">testLockUnlockAssetTransfersWithMetadata</text>
+</g>
+<!-- ERC7625Test.testLockUnlockAssetTransfersWithMetadata&#45;&gt;ERC7625.createContract -->
+<g id="edge4" class="edge" data-name="ERC7625Test.testLockUnlockAssetTransfersWithMetadata-&gt;ERC7625.createContract">
+
+<path fill="none" stroke="white" stroke-width="2" d="M224.11,-369.75C254.95,-326.36 336.42,-220.7 431.84,-169 447.22,-160.67 464.95,-154.9 482.19,-150.92" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="482.88,-154.35 491.95,-148.88 481.45,-147.5 482.88,-154.35" style=""/>
+</g>
+<!-- ERC7625._lockAssetTransfers -->
+<g id="node8" class="node" pointer-events="visible" data-name="ERC7625._lockAssetTransfers">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="559.73" cy="-88" rx="90.33" ry="18" style=""/>
+<text text-anchor="middle" x="559.73" y="-83.8" font-family="Times,serif" font-size="14.00" style="">_lockAssetTransfers</text>
+</g>
+<!-- ERC7625Test.testLockUnlockAssetTransfersWithMetadata&#45;&gt;ERC7625._lockAssetTransfers -->
+<g id="edge5" class="edge" data-name="ERC7625Test.testLockUnlockAssetTransfersWithMetadata-&gt;ERC7625._lockAssetTransfers">
+
+<path fill="none" stroke="white" stroke-width="2" d="M220.45,-369.64C246.52,-318.83 324.33,-181.06 431.84,-115 442.09,-108.7 453.6,-103.85 465.38,-100.13" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="466.14,-103.55 474.81,-97.46 464.23,-96.82 466.14,-103.55" style=""/>
+</g>
+<!-- ERC7625._unlockAssetTransfers -->
+<g id="node9" class="node" pointer-events="visible" data-name="ERC7625._unlockAssetTransfers">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="559.73" cy="-34" rx="100.14" ry="18" style=""/>
+<text text-anchor="middle" x="559.73" y="-29.8" font-family="Times,serif" font-size="14.00" style="">_unlockAssetTransfers</text>
+</g>
+<!-- ERC7625Test.testLockUnlockAssetTransfersWithMetadata&#45;&gt;ERC7625._unlockAssetTransfers -->
+<g id="edge6" class="edge" data-name="ERC7625Test.testLockUnlockAssetTransfersWithMetadata-&gt;ERC7625._unlockAssetTransfers">
+
+<path fill="none" stroke="white" stroke-width="2" d="M217.87,-369.67C239.55,-312.32 311.78,-142.06 431.84,-61 440.11,-55.42 449.31,-50.96 458.89,-47.4" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="459.88,-50.76 468.29,-44.31 457.69,-44.11 459.88,-50.76" style=""/>
+</g>
+<!-- ERC7625Test.testApproveAndRevokeOperatorWithMetadata -->
+<g id="node4" class="node" pointer-events="visible" data-name="ERC7625Test.testApproveAndRevokeOperatorWithMetadata">
+
+<ellipse fill="#ff9797" stroke="#ff9797" stroke-width="3" cx="209.92" cy="-443" rx="193.84" ry="18" style=""/>
+<text text-anchor="middle" x="209.92" y="-438.8" font-family="Times,serif" font-size="14.00" style="">testApproveAndRevokeOperatorWithMetadata</text>
+</g>
+<!-- ERC7625Test.testApproveAndRevokeOperatorWithMetadata&#45;&gt;ERC7625Test.assertEq -->
+<g id="edge9" class="edge" data-name="ERC7625Test.testApproveAndRevokeOperatorWithMetadata-&gt;ERC7625Test.assertEq">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M392.97,-436.26C433.2,-436.32 472.85,-436.87 503.28,-437.9" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="503.01,-441.39 513.13,-438.27 503.27,-434.4 503.01,-441.39" style=""/>
+</g>
+<!-- ERC7625Test.testApproveAndRevokeOperatorWithMetadata&#45;&gt;ERC7625Test.assertEq -->
+<g id="edge12" class="edge" data-name="ERC7625Test.testApproveAndRevokeOperatorWithMetadata-&gt;ERC7625Test.assertEq">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M392.97,-449.74C433.2,-449.68 472.85,-449.13 503.28,-448.1" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="503.27,-451.6 513.13,-447.73 503.01,-444.61 503.27,-451.6" style=""/>
+</g>
+<!-- ERC7625Test.testApproveAndRevokeOperatorWithMetadata&#45;&gt;ERC7625.createContract -->
+<g id="edge7" class="edge" data-name="ERC7625Test.testApproveAndRevokeOperatorWithMetadata-&gt;ERC7625.createContract">
+
+<path fill="none" stroke="white" stroke-width="2" d="M380.4,-433.78C388.96,-429 396.88,-423.15 403.84,-416 480.93,-336.86 357.59,-250.81 431.84,-169 444.02,-155.58 461.07,-147.93 478.74,-143.75" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="479.2,-147.22 488.36,-141.9 477.88,-140.35 479.2,-147.22" style=""/>
+</g>
+<!-- ERC7625.approveOperatorToTransfer -->
+<g id="node10" class="node" pointer-events="visible" data-name="ERC7625.approveOperatorToTransfer">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="559.73" cy="-250" rx="119.78" ry="18" style=""/>
+<text text-anchor="middle" x="559.73" y="-245.8" font-family="Times,serif" font-size="14.00" style="">approveOperatorToTransfer</text>
+</g>
+<!-- ERC7625Test.testApproveAndRevokeOperatorWithMetadata&#45;&gt;ERC7625.approveOperatorToTransfer -->
+<g id="edge8" class="edge" data-name="ERC7625Test.testApproveAndRevokeOperatorWithMetadata-&gt;ERC7625.approveOperatorToTransfer">
+
+<path fill="none" stroke="white" stroke-width="2" d="M364.06,-431.07C378.74,-425.54 392.39,-417.78 403.84,-407 449.71,-363.79 387.52,-312.8 431.84,-268 433.2,-266.62 434.61,-265.31 436.07,-264.06" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="437.84,-267.1 443.88,-258.4 433.73,-261.43 437.84,-267.1" style=""/>
+</g>
+<!-- ERC7625Test.testApproveAndRevokeOperatorWithMetadata&#45;&gt;ERC7625.approveOperatorToTransfer -->
+<g id="edge11" class="edge" data-name="ERC7625Test.testApproveAndRevokeOperatorWithMetadata-&gt;ERC7625.approveOperatorToTransfer">
+
+<path fill="none" stroke="white" stroke-width="2" d="M390.46,-435.65C395.17,-432.48 399.65,-428.94 403.84,-425 449.71,-381.79 387.52,-330.8 431.84,-286 439.72,-278.03 449.34,-272.14 459.71,-267.75" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="460.64,-271.14 468.85,-264.44 458.25,-264.56 460.64,-271.14" style=""/>
+</g>
+<!-- ERC7625.getApproved -->
+<g id="node11" class="node" pointer-events="visible" data-name="ERC7625.getApproved">
+
+<ellipse fill="#edad56" stroke="#edad56" stroke-width="3" cx="559.73" cy="-196" rx="61.41" ry="18" style=""/>
+<text text-anchor="middle" x="559.73" y="-191.8" font-family="Times,serif" font-size="14.00" style="">getApproved</text>
+</g>
+<!-- ERC7625Test.testApproveAndRevokeOperatorWithMetadata&#45;&gt;ERC7625.getApproved -->
+<g id="edge10" class="edge" data-name="ERC7625Test.testApproveAndRevokeOperatorWithMetadata-&gt;ERC7625.getApproved">
+
+<path fill="none" stroke="white" stroke-width="2" d="M365.6,-431.32C379.81,-425.7 392.93,-417.85 403.84,-407 465.28,-345.87 372.59,-277.27 431.84,-214 447.48,-197.3 470.68,-189.6 492.98,-186.96" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="493.23,-190.45 502.93,-186.18 492.69,-183.47 493.23,-190.45" style=""/>
+</g>
+<!-- ERC7625Test.testApproveAndRevokeOperatorWithMetadata&#45;&gt;ERC7625.getApproved -->
+<g id="edge13" class="edge" data-name="ERC7625Test.testApproveAndRevokeOperatorWithMetadata-&gt;ERC7625.getApproved">
+
+<path fill="none" stroke="white" stroke-width="2" d="M390.74,-435.94C395.38,-432.69 399.76,-429.06 403.84,-425 465.28,-363.87 372.59,-295.27 431.84,-232 446.31,-216.55 467.26,-208.8 487.98,-204.74" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="488.5,-208.21 497.8,-203.14 487.37,-201.3 488.5,-208.21" style=""/>
+</g>
+<!-- key -->
+<g id="node12" class="node" pointer-events="visible" data-name="key">
+
+<polygon fill="#edad56" stroke="none" stroke-width="3" points="274.92,-706 144.92,-706 144.92,-618 274.92,-618 274.92,-706" style=""/>
+<text text-anchor="start" x="194.56" y="-687.4" font-family="Times,serif" font-size="14.00" style="">Internal Call</text>
+<text text-anchor="start" x="190.67" y="-667.4" font-family="Times,serif" font-size="14.00" style="">External Call</text>
+<text text-anchor="start" x="168.12" y="-647.4" font-family="Times,serif" font-size="14.00" style="">Defined Contract</text>
+<text text-anchor="start" x="154.52" y="-627.4" font-family="Times,serif" font-size="14.00" style="">Undefined Contract</text>
+</g>
+<!-- key2 -->
+<g id="node13" class="node" pointer-events="visible" data-name="key2">
+
+<polygon fill="#edad56" stroke="none" stroke-width="3" points="586.73,-706 532.73,-706 532.73,-618 586.73,-618 586.73,-706" style=""/>
+<text text-anchor="start" x="549.73" y="-687.4" font-family="Times,serif" font-size="14.00" style="">   </text>
+<text text-anchor="start" x="549.73" y="-667.4" font-family="Times,serif" font-size="14.00" style="">   </text>
+<polygon fill="#445773" stroke="none" points="547.73,-642 547.73,-662 572.73,-662 572.73,-642 547.73,-642" style=""/>
+<text text-anchor="start" x="549.73" y="-647.4" font-family="Times,serif" font-size="14.00" style="">   </text>
+<polygon fill="none" stroke="#e8726d" points="549.73,-624 549.73,-640 570.73,-640 570.73,-624 549.73,-624" style=""/>
+</g>
+<!-- key&#45;&gt;key2 -->
+<g id="edge14" class="edge" data-name="key-&gt;key2">
+
+<path fill="none" stroke="#1bc6a6" stroke-width="2" d="M267.92,-692C387.48,-692 420.52,-692 534,-692" style=""/>
+<polygon fill="#1bc6a6" stroke="#1bc6a6" stroke-width="2" points="533.7,-695.5 543.7,-692 533.7,-688.5 533.7,-695.5" style=""/>
+</g>
+<!-- key&#45;&gt;key2 -->
+<g id="edge15" class="edge" data-name="key-&gt;key2">
+
+<path fill="none" stroke="white" stroke-width="2" d="M267.92,-672C387.48,-672 420.52,-672 534,-672" style=""/>
+<polygon fill="white" stroke="white" stroke-width="2" points="533.7,-675.5 543.7,-672 533.7,-668.5 533.7,-675.5" style=""/>
+</g>
+</g>
+</svg>

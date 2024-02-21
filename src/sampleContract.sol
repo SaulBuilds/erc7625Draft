@@ -14,22 +14,16 @@ contract BasicNFT is ERC721, Ownable {
         ERC721(name, symbol) Ownable(msg.sender)
     {}
 
-    // Function to set the base URI
     function setBaseURI(string memory baseURI_) external onlyOwner {
         _baseURIextended = baseURI_;
     }
-
-    // Override _baseURI function to return the set _baseURIextended
     function _baseURI() internal view virtual override(ERC721) returns (string memory) {
         return _baseURIextended;
     }
 
-    // Function to mint a new NFT
     function mint(address to, uint256 tokenId) public onlyOwner {
         _mint(to, tokenId);
     }
-
-    // Function to withdraw collected funds
     function withdraw() public onlyOwner {
         uint256 balance = address(this).balance;
         require(balance > 0, "No funds to withdraw");

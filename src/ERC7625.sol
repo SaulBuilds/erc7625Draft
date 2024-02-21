@@ -10,58 +10,82 @@ import "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import "../lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol";
 import "./IERC7625.sol";
 import "./sampleContract.sol";
-import "./MetadataLib.sol"; // Import the Metadata library
-import "./MetadataGenerator.sol"; 
-/**
- * @title ERC7625 Smart Contract Identification and Management
- * @dev Implements the IERC7625 interface to manage smart contracts with unique IDs. This contract provides
- * functionality to create unique contract IDs, lock and unlock asset transfers, approve operators for transfers,
- * and manage ownership and approvals of contract IDs. It's designed for managing assets and their ownership
- * securely within a decentralized application.
- */
-contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
-    MetadataGenerator public metadataGenerator; // Instance of the MetadataGenerator contract
+import "./MetadataLib.sol"; 
+import "./MetadataGenerator.sol";
 
-    /// @notice Mapping from contract ID to owner address
+/// @title ERC7625 Smart Contract Identification and Management
+/// @notice Implements the IERC7625 interface for managing smart contracts with unique IDs, enabling functionalities such as locking and unlocking asset transfers, approving operators, and handling ownership and approvals of contracts securely within decentralized applications.
+/// @dev Extends `ERC165` for interface detection, `Ownable` for ownership management, and `ReentrancyGuard` for preventing re-entrance attacks.
+contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
+    /// @dev Instance of the MetadataGenerator contract used to generate metadata for contracts.
+    MetadataGenerator public metadataGenerator;
+
+    /// @dev Maps contract IDs to their respective owner addresses.
     mapping(uint256 => address) private _contractOwners;
 
-    /// @notice Mapping from owner address to list of owned contract IDs
+    /// @dev Maps owner addresses to their list of owned contract IDs.
     mapping(address => uint256[]) private _ownedContracts;
 
-    /// @notice  Mapping from contract ID to its lock status (true if locked)
+    /// @dev Maps contract IDs to their lock status (true if locked).
     mapping(uint256 => bool) private _contractLocks;
 
-    /// @notice Mapping from contract ID to approved address for transfer
+    /// @dev Maps contract IDs to addresses approved for transferring them.
     mapping(uint256 => address) private _contractApprovals;
 
-    /// @notice New mapping for contract metadata URIs
+    /// @dev Maps contract IDs to their metadata URIs.
     mapping(uint256 => string) private _contractMetadataURIs;
 
+    /// @notice Emitted when a contract is received by this contract.
+    /// @param operator The address which called the function leading to this event.
+    /// @param from The address from which the contract ID was transferred.
+    /// @param contractId The ID of the contract being transferred.
+    /// @param data Additional data sent with the transfer.
     event ContractReceived(
         address operator,
         address from,
         uint256 contractId,
         bytes data
     );
+
+    /// @notice Emitted when a new contract instance is created.
+    /// @param instance The address of the newly created contract instance.
+    /// @param contractId The unique identifier of the contract.
+
     event ContractInstanceCreated(
         address indexed instance,
         uint256 indexed contractId
     );
+
+    /// @notice Emitted when assets are locked or unlocked.
+    /// @param owner The owner of the assets.
+    /// @param contractId The ID of the contract whose assets are being locked or unlocked.
+    /// @param locked The new lock status of the contract's assets.
     event AssetsLocked(address owner, uint256 contractId, bool locked);
 
-    /// @notice Counter to generate unique contract IDs
+    /// @dev Counter for generating unique contract IDs.
     uint256 private _currentContractId;
 
-    /**
-     * @dev Initializes the contract setting the deployer as the initial owner.
-     */
+    /// @dev Fee required to create a new contract.
+    uint256 public CONTRACT_CREATION_FEE = 1 ether;
+
+    ///  @notice Initializes the contract by setting the deployer as the initial owner and configuring the metadata generator.
+    ///  @param _metadataGenerator The address of the MetadataGenerator contract.
     constructor(address _metadataGenerator) Ownable(msg.sender) {
         metadataGenerator = MetadataGenerator(_metadataGenerator);
     }
 
-    /**
-     * @dev See {IERC165-supportsInterface}.
-     */
+    /// @notice Checks if the asset transfers for a given contract are locked.
+    /// @param contractId The unique identifier of the contract.
+    /// @return locked True if asset transfers for the contract are locked, false otherwise.
+    function isContractLocked(
+        uint256 contractId
+    ) public view returns (bool locked) {
+        return _contractLocks[contractId];
+    }
+
+    /// @notice Overrides `supportsInterface` to declare support for `IERC7625` and `ERC165` interfaces.
+    /// @param interfaceId The interface identifier to check.
+    /// @return True if the contract supports the given interface, false otherwise.
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual override(IERC165, ERC165) returns (bool) {
@@ -70,6 +94,9 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
             super.supportsInterface(interfaceId);
     }
 
+    /// @dev Automatically locks asset transfers for the given contract ID.
+    ///     Only callable by the owner of the contract ID. Emits an {AssetsLocked} event.
+    /// @param contractId Unique identifier for the contract whose assets are to be locked.
     function autoLockAssetTransfers(uint256 contractId) internal {
         require(
             _contractOwners[contractId] == msg.sender,
@@ -79,15 +106,11 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
         emit AssetsLocked(msg.sender, true);
     }
 
-    /**
-     * @dev Internally locks the transfers and withdrawals of a specific contract ID, preventing any changes.
-     * Emits an {AssetsLocked} event indicating the contract is locked.
-     *
-     * Requirements:
-     * - The caller must be the owner of the contract ID.
-     *
-     * @param contractId The ID of the contract to lock.
-     */
+    /// @dev Internally locks the transfers and withdrawals of a specific contract ID, preventing any changes.
+    /// Emits an {AssetsLocked} event indicating the contract is locked.
+    /// Requirements:
+    ///   - The caller must be the owner of the contract ID.
+    /// @param contractId The ID of the contract to lock.
     function _lockAssetTransfers(uint256 contractId) external onlyOwner {
         require(
             msg.sender == _contractOwners[contractId],
@@ -96,55 +119,46 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
         autoLockAssetTransfers(contractId);
     }
 
-    /**
-     * @notice Unlocks asset transfers for a specific contract.
-     * @dev Only callable by the owner.
-     * @param contractId The unique identifier of the contract to unlock.
-     */
+    /// @notice Unlocks asset transfers for a specific contract.
+    /// @dev Only callable by the owner.
+    /// @param contractId The unique identifier of the contract to unlock.
     function _unlockAssetTransfers(uint256 contractId) external onlyOwner {
         require(_contractLocks[contractId], "ERC7625: Contract is not locked");
         _contractLocks[contractId] = false;
         emit AssetsLocked(owner(), false);
     }
 
-    /**
-     * @dev See {IERC7625-balanceOfContractId}.
-     */
+    /// @dev Returns the number of contracts owned by the specified address.
+    /// @param owner Address to query the number of owned contracts.
+    /// @return The number of owned contracts.
     function balanceOfContractId(
         address owner
     ) public view override returns (uint256) {
         return _ownedContracts[owner].length;
     }
 
-    /**
-     * @dev See {IERC7625-ownerOfContractId}.
-     */
+    /// @dev See {IERC7625-ownerOfContractId}.
     function ownerOfContractId(
         uint256 contractId
     ) public view override returns (address) {
         return _contractOwners[contractId];
     }
 
-    /**
-     * @notice Transfers a contract from one address to another with additional data.
-     * @dev Safely transfers the ownership of a given contract ID from one address to another address.
-     *
-     * Before the transfer, the contract must be locked, ensuring no changes can occur during the process.
-     * If the target address is a contract, it must implement `IERC7625Receiver` and return the
-     * correct magic value upon successful receipt of the contract. The `data` parameter allows the
-     * sender to pass arbitrary data to the receiver in the `onERC7625Received` call.
-     * After the transfer, ownership is updated, and the new owner has the ability to unlock the contract.
-     *
-     * @param from The current owner of the contract.
-     * @param to The address to transfer the contract to. Must implement `IERC7625Receiver` if it is a contract.
-     * @param contractId The ID of the contract to transfer.
-     * @param data Additional data with no specified format, sent to the receiver.
-     *
-     * require The caller must be the owner of the contract ID.
-     * require The contract ID must be locked for transfer.
-     * require `to` cannot be the zero address.
-     * require If `to` is a contract, it must support the `IERC7625Receiver` interface.
-     */
+    /// @notice Transfers a contract from one address to another with additional data.
+    /// @dev Safely transfers the ownership of a given contract ID from one address to another address.
+    ///        Before the transfer, the contract must be locked, ensuring no changes can occur during the process.
+    ///        If the target address is a contract, it must implement `IERC7625Receiver` and return the
+    ///        correct magic value upon successful receipt of the contract. The `data` parameter allows the
+    ///        sender to pass arbitrary data to the receiver in the `onERC7625Received` call.
+    ///        After the transfer, ownership is updated, and the new owner has the ability to unlock the contract.
+    /// @param from The current owner of the contract.
+    /// @param to The address to transfer the contract to. Must implement `IERC7625Receiver` if it is a contract.
+    /// @param contractId The ID of the contract to transfer.
+    /// @param data Additional data with no specified format, sent to the receiver.
+    ///    require The caller must be the owner of the contract ID.
+    ///    require The contract ID must be locked for transfer.
+    ///    require `to` cannot be the zero address.
+    ///    require If `to` is a contract, it must support the `IERC7625Receiver` interface.
     function safeContractTransferFrom(
         address from,
         address to,
@@ -160,11 +174,7 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
             "ERC7625: Contract is not locked for transfer"
         );
         require(to != address(0), "ERC7625: Transfer to the zero address");
-
-        // Update ownership to the new owner
         _contractOwners[contractId] = to;
-
-        // If 'to' is a contract, try calling onERC7625Received
         if (to.code.length > 0) {
             require(
                 IERC7625Receiver(to).onERC7625Received(
@@ -176,11 +186,13 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
                 "ERC7625: Transfer to non IERC7625Receiver implementer"
             );
         }
-
-        // Keep the contract locked, leaving it to the new owner to unlock
         emit TransferContract(from, to, contractId);
     }
 
+    /// @dev Approves an operator to transfer a specific contract ID on behalf of the msg.sender.
+    ///     Automatically locks the asset transfers for the contract ID.
+    /// @param approved Address to be approved for transferring the contract ID.
+    /// @param contractId Contract ID for which the operator is approved.
     function approveOperatorToTransfer(
         address approved,
         uint256 contractId
@@ -194,11 +206,9 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
         emit ApprovalForTransfer(msg.sender, approved, contractId);
     }
 
-    /**
-     * @dev Sets or revokes approval for an operator to manage all the sender's contracts, auto-locking them.
-     * @param operator The operator's address.
-     * @param approved Whether the approval is being set or revoked.
-     */
+    /// @dev Sets or revokes approval for an operator to manage all the sender's contracts, auto-locking them.
+    /// @param operator The operator's address.
+    /// @param approved Whether the approval is being set or revoked.
     function setApprovalForAllContracts(
         address operator,
         bool approved
@@ -209,29 +219,24 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
             _contractApprovals[contractId] = approved ? operator : address(0);
             if (approved) {
                 autoLockAssetTransfers(contractId);
-            } // Consider implementing autoUnlockAssetTransfers if you want to unlock when revoking approval
+            }
         }
         emit ApprovalForTransferOfAll(msg.sender, operator, approved);
     }
 
-    /**
-     * @notice Gets the approved address for a specific contract.
-     * @param contractId The unique identifier of the contract.
-     * @return The address approved to manage the contract.
-     */
+    /// @notice Gets the approved address for a specific contract.
+    /// @param contractId The unique identifier of the contract.
+    /// @return The address approved to manage the contract.
     function getApproved(
         uint256 contractId
     ) public view override returns (address) {
         return _contractApprovals[contractId];
     }
 
-    /**
-     * @notice Withdraws funds from the contract.
-     * @dev Only callable by the owner. Uses ReentrancyGuard to prevent reentrancy attacks.
-     * @param to The recipient address.
-     * @param amount The amount to withdraw.
-     */
-
+    /// @notice Withdraws funds from the contract.
+    /// @dev Only callable by the owner. Uses ReentrancyGuard to prevent reentrancy attacks.
+    /// @param to The recipient address.
+    /// @param amount The amount to withdraw.
     function withdraw(
         address to,
         uint256 amount
@@ -244,6 +249,11 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
         emit Withdraw(to, amount);
     }
 
+    /**
+     ///@dev Creates a new contract instance with the given properties and assigns it a unique contract ID.
+     ///@param salt A unique salt to ensure the uniqueness of the deployed contract address.
+     ///@return contractId The unique identifier assigned to the newly created contract.
+     */
     function createContract(
         bytes32 salt,
         string memory name,
@@ -259,8 +269,11 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
         string memory functionsJSON,
         string memory eventsJSON,
         string memory mappingsJSON
-    ) external onlyOwner returns (uint256 contractId) {
-        // Assuming 'name' and a previously undeclared 'symbol' variable are meant for BasicNFT
+    ) external payable returns (uint256 contractId) {
+        require(
+            msg.value == CONTRACT_CREATION_FEE,
+            "ERC7625: Creation fee is 1 ether"
+        );
         string memory symbol = "SYMBOL"; // Define or replace with actual symbol
 
         bytes memory bytecode = abi.encodePacked(
@@ -273,13 +286,8 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
 
         contractId = ++_currentContractId;
         _contractOwners[contractId] = msg.sender;
-        // This line had an error due to 'metadata' being undeclared
-        // _contractMetadataURIs[contractId] = string(metadata);
-        // Correct approach: Store metadata URI or use MetadataGenerator to handle metadata
-
-        // Example of creating metadata using MetadataGenerator (ensure parameters match your method signature in MetadataGenerator)
         metadataGenerator.createMetadata(
-            instance, // Address of the newly created contract instance
+            instance,
             contractId,
             name,
             description,
@@ -300,16 +308,16 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Handles the receipt of an incoming contract. This function is called whenever the contract ID is transferred
-     * to this contract via `safeContractTransferFrom`. It can be used to enforce custom logic upon receiving the contract,
-     * such as verifying the transfer, updating internal state, or locking the transfer of the contract ID until further
-     * action is taken.
+     ///@dev Handles the receipt of an incoming contract. This function is called whenever the contract ID is transferred
+     ///to this contract via `safeContractTransferFrom`. It can be used to enforce custom logic upon receiving the contract,
+     ///such as verifying the transfer, updating internal state, or locking the transfer of the contract ID until further
+     ///action is taken.
      *
-     * @param operator The address which initiated the transfer (typically the current owner).
-     * @param from The address from which the contract ID was transferred.
-     * @param contractId The ID of the contract being transferred.
-     * @param data Additional data sent with the transfer.
-     * @return bytes4 Magic value to signify the successful receipt of a contract ID.
+     ///@param operator The address which initiated the transfer (typically the current owner).
+     ///@param from The address from which the contract ID was transferred.
+     ///@param contractId The ID of the contract being transferred.
+     ///@param data Additional data sent with the transfer.
+     ///@return bytes4 Magic value to signify the successful receipt of a contract ID.
      */
     function onContractReceived(
         address operator,
@@ -317,18 +325,14 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
         uint256 contractId,
         bytes calldata data
     ) external override returns (bytes4) {
-        // Example validation or action. Real implementation would depend on specific requirements.
-        // Verify that the contractId is expected or conforms to certain criteria
         require(
             _validateContractId(contractId),
             "ERC7625: Unexpected contract ID"
         );
 
-        // Update internal state to reflect the receipt of the contractId
         _contractOwners[contractId] = address(this); // Transfer ownership to this contract
         _ownedContracts[address(this)].push(contractId); // Record the contract as owned by this contract
 
-        // Optionally, lock the contractId to prevent further transfers until explicitly unlocked
         _contractLocks[contractId] = true;
 
         emit ContractReceived(operator, from, contractId, data);
@@ -336,23 +340,16 @@ contract ERC7625 is IERC7625, ERC165, Ownable, ReentrancyGuard {
         return this.onContractReceived.selector;
     }
 
-    /**
-     * @dev Validates that a contract ID is both owned and currently locked, indicating it's prepared for a secure transfer.
-     * This ensures the integrity and controlled management of contract transfers.
-     *
-     * @param contractId The ID of the contract being validated.
-     * @return bool indicating whether the contractId is both owned and locked, ready for transfer.
-     */
+    /// @dev Validates that a contract ID is both owned and currently locked, indicating it's prepared for a secure transfer.
+    /// This ensures the integrity and controlled management of contract transfers.
+    /// @param contractId The ID of the contract being validated.
+    /// @return bool indicating whether the contractId is both owned and locked, ready for transfer.
     function _validateContractId(
         uint256 contractId
     ) internal view returns (bool) {
-        // Check that the contract ID is owned, indicating it's not a new or unassigned ID.
         bool isOwned = _contractOwners[contractId] != address(0);
-
-        // Check that the contract ID is currently locked, indicating it's in a secure state for transfer.
         bool isLocked = _contractLocks[contractId];
 
-        // The contract ID is valid for transfer if it's both owned and locked.
         return isOwned && isLocked;
     }
 }

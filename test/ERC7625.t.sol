@@ -8,20 +8,38 @@ import "../src/MetadataGenerator.sol";
 
 
 /// @title Test Suite for ERC7625 Smart Contract with MetadataGenerator
+/// @dev Using forge-std's Test contract for setting up and executing tests.
 contract ERC7625Test is Test {
     ERC7625 erc7625;
     MetadataGenerator metadataGenerator;
+    
+    /// Fixed fee for contract creation within the ERC7625 contract.
+    uint256 public constant CONTRACT_CREATION_FEE = 1 ether; 
 
+    /// Stores the last created contract ID for verification in tests.
+    uint256 public contractId;
+
+    /// @dev Sets up the ERC7625 and MetadataGenerator contracts before each test.
     function setUp() public {
-        // Deploy the MetadataGenerator and pass its address to the ERC7625 contract
         metadataGenerator = new MetadataGenerator();
         erc7625 = new ERC7625(address(metadataGenerator));
+
+        // Provide the test contract with Ether to cover contract creation fees and other expenses.
+        uint256 initialTestContractBalance = 100 ether; 
+        vm.deal(address(this), initialTestContractBalance);
+
+        // Optionally, allocate Ether to the ERC7625 contract if needed for testing its Ether handling capabilities.
+        uint256 initialERC7625ContractBalance = 50 ether; // Adjust the amount as needed
+        vm.deal(address(erc7625), initialERC7625ContractBalance);
     }
 
-    /// @notice Tests creating a new contract instance and verifies its ownership and metadata creation.
+    /// @dev Tests creating a contract and its metadata through the ERC7625 contract.
     function testCreateContractAndMetadata() public {
+        vm.deal(address(this), 1 ether);
+
         bytes32 salt = keccak256(abi.encodePacked(block.timestamp));
-        uint256 contractId = erc7625.createContract(
+        vm.prank(address(this)); 
+        contractId = erc7625.createContract{value: 1 ether}(
             salt,
             "Contract Name",
             "Contract Description",
@@ -32,26 +50,30 @@ contract ERC7625Test is Test {
             "Ethereum",
             "http://sourcecode.url",
             "MIT License",
-            "[]", // attributesJSON
-            "[]", // functionsJSON
-            "[]", // eventsJSON
-            "{}"  // mappingsJSON
+            "[]",
+            "[]",
+            "[]",
+            "{}"
         );
 
-        // Assuming you have a mechanism to obtain the instance address after contract creation
-        address instanceAddress = address(0); // Placeholder: Replace with actual mechanism to obtain instance address
-
-        MetadataLib.Metadata memory metadata = metadataGenerator.getMetadata(instanceAddress);
-        assertEq(metadata.name, "Contract Name", "Metadata name mismatch");
+        address ownerOfContractId = erc7625.ownerOfContractId(contractId);
+        assertEq(
+            ownerOfContractId,
+            address(this),
+            "Owner should be this contract"
+        );
     }
 
-    /// @notice Tests locking and unlocking a contract's asset transfers with metadata considerations.
-    function testLockUnlockAssetTransfersWithMetadata() public {
-        bytes32 salt = keccak256("unique salt for locking test");
-        uint256 contractId = erc7625.createContract(
+    /// @dev Tests the locking and unlocking functionality of a contract in ERC7625.
+    function testLockAndUnlockContract() public {
+        vm.deal(address(this), 1 ether);
+
+        bytes32 salt = keccak256("Test Salt for Locking");
+        vm.prank(address(this)); 
+        uint256 newContractId = erc7625.createContract{value: 1 ether}(
             salt,
-            "Lock/Unlock Test",
-            "Description",
+            "Lock Test",
+            "Testing lock and unlock functionality",
             "http://image.url",
             "http://external.url",
             "Utility",
@@ -65,39 +87,118 @@ contract ERC7625Test is Test {
             "{}"
         );
 
-        // Lock and then unlock the contract's asset transfers
-        erc7625._lockAssetTransfers(contractId);
-        erc7625._unlockAssetTransfers(contractId);
+        assertTrue(
+            !erc7625.isContractLocked(newContractId),
+            "Contract should be unlocked initially"
+        );
+        erc7625._lockAssetTransfers(newContractId);
+        assertTrue(
+            erc7625.isContractLocked(newContractId),
+            "Contract should be locked after lock operation"
+        );
 
-        // Additional assertions could be made here if the contract provided a way to check lock status
+        erc7625._unlockAssetTransfers(newContractId);
+        assertFalse(
+            erc7625.isContractLocked(newContractId),
+            "Contract should be unlocked after unlock operation"
+        );
     }
 
-    /// @notice Tests the approval and revocation process for a contract's management, considering metadata implications.
-    function testApproveAndRevokeOperatorWithMetadata() public {
-        bytes32 salt = keccak256("unique salt for operator test");
-        uint256 contractId = erc7625.createContract(
+    /// @dev Tests creating multiple contracts and withdrawing Ether from the ERC7625 contract.
+    function testCreateMultipleContractsAndWithdraw() public {
+        uint256 contractsToCreate = 10;
+        uint256 totalPayment = CONTRACT_CREATION_FEE * contractsToCreate;
+
+        vm.deal(address(this), totalPayment);
+
+        uint256[] memory createdContractIds = new uint256[](contractsToCreate);
+        for (uint256 i = 0; i < contractsToCreate; i++) {
+            bytes32 salt = keccak256(abi.encodePacked(block.timestamp, i));
+            vm.prank(address(this)); // Ensure the caller is this test contract
+            uint256 newContractId = erc7625.createContract{
+                value: CONTRACT_CREATION_FEE
+            }(
+                salt,
+                "Contract Name",
+                "Contract Description",
+                "http://image.url",
+                "http://external.url",
+                "DeFi",
+                "0xCreatorAddress",
+                "Ethereum",
+                "http://sourcecode.url",
+                "MIT License",
+                "[]",
+                "[]",
+                "[]",
+                "{}"
+            );
+            createdContractIds[i] = newContractId;
+        }
+
+        for (uint256 i = 0; i < contractsToCreate; i++) {
+            assertTrue(
+                erc7625.ownerOfContractId(createdContractIds[i]) ==
+                    address(this),
+                "Contract creation failed"
+            );
+        }
+
+        uint256 initialBalance = address(this).balance;
+        uint256 withdrawAmount = totalPayment / 2;
+        erc7625.withdraw(address(this), withdrawAmount);
+
+        uint256 finalBalance = address(this).balance;
+        assertEq(
+            finalBalance,
+            initialBalance + withdrawAmount,
+            "Withdrawal amount does not match"
+        );
+    }
+
+    /// @dev Tests setting approval for a contract and the auto-locking mechanism in ERC7625.
+    function testSetApprovalAndAutoLock() public {
+        vm.deal(address(this), 10 ether);
+
+        bytes32 salt = keccak256(abi.encodePacked(block.timestamp));
+        contractId = erc7625.createContract{value: 1 ether}(
             salt,
             "Approval Test",
-            "Description",
+            "Testing approval and auto lock functionality",
             "http://image.url",
             "http://external.url",
-            "NFT",
+            "Utility",
             "0xCreator",
             "Ethereum",
             "http://sourcecode.url",
-            "Apache-2.0",
+            "GPL-3.0",
             "[]",
             "[]",
             "[]",
             "{}"
         );
 
-        address operator = address(0x1);
-        erc7625.approveOperatorToTransfer(operator, contractId);
-        assertEq(erc7625.getApproved(contractId), operator, "Operator was not approved correctly");
+        address approvedAddress = address(0x123);
+        vm.prank(address(this));
+        erc7625.approveOperatorToTransfer(approvedAddress, contractId);
 
-        // Revoke the approval
-        erc7625.approveOperatorToTransfer(address(0), contractId);
-        assertEq(erc7625.getApproved(contractId), address(0), "Operator was not revoked correctly");
+        assertTrue(erc7625.isContractLocked(contractId), "Contract should be automatically locked after setting approval");
+
+        vm.prank(address(this)); // Simulating the owner
+        erc7625._unlockAssetTransfers(contractId);
+        assertFalse(erc7625.isContractLocked(contractId), "Contract should be unlocked by the owner");
     }
+
+    /// @dev Tests attempting to unlock an already unlocked contract, expecting it to revert.
+    function testUnlockUnlockedContract() public {
+    bytes32 salt = keccak256(abi.encodePacked("UniqueSalt"));
+    contractId = erc7625.createContract{value: CONTRACT_CREATION_FEE}(
+        salt, "Name", "Description", "ImageURL", "ExternalLink", "Type", "Creator", "Network", "SourceCodeLink", "License", "[]", "[]", "[]", "{}"
+    );
+
+    vm.prank(address(this)); 
+    vm.expectRevert("ERC7625: Contract is not locked");
+    erc7625._unlockAssetTransfers(contractId);
+}
+    receive() external payable {}
 }
